@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script:module PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "module.dtd">
+<script:module xmlns:script="http://openoffice.org/2000/script" script:name="Module1" script:language="StarBasic" script:moduleType="normal">&apos;*************************************************************************************
+Sub ConvertDate
+	On Error Goto ErrorHandler	
+	oDoc = ThisComponent 
+ 	oSheet = oDoc.CurrentController.getActiveSheet 
+ 	oRange = oDoc.CurrentController.Selection 	   	
+   	nStartColumn = oRange.RangeAddress.startColumn
+   	nStartRow = oRange.RangeAddress.startRow
+	nEndColumn =oRange.RangeAddress.endColumn
+	nEndRow = oRange.RangeAddress.endRow
+&apos;------------------------------------	
+&apos;以下を任意の日付書式に変更してください
+&apos;sFormat = &quot;GGGE年M月D日&quot;
+ sFormat = &quot;YYYY/M/D&quot;
+&apos;------------------------------------
+	Dim oLocale As New com.sun.star.lang.Locale
+	&apos;書式コードを探す	
+	oNumberFormats = ThisComponent.NumberFormats
+	nKey = oNumberFormats.queryKey( sFormat, oLocale, False )
+	If nKey = -1 Then	nKey = oNumberFormats.addNew( sFormat, oLocale )
+	ThisComponent.addActionLock
+	
+	for x= nStartColumn to  nEndColumn
+	for y= nStartRow to nEndRow
+	sDate=&quot;&quot;
+	oCell = oSheet.getCellByPosition(x,y)
+ 	sMoji = oCell.string
+	sMoji = LCase(sMoji)
+	sMoji = Replace(sMoji, "元", "1" )
+
+ Select Case left(sMoji,2)
+	Case &quot;大正&quot;
+		sDate = Conv(1911,sMoji)
+
+	Case &quot;昭和&quot;
+		sDate = Conv(1925,sMoji)
+
+	Case &quot;平成&quot;
+		sDate = Conv(1988,sMoji)
+
+	Case &quot;令和&quot;
+		sDate = Conv(2018,sMoji)
+
+	Case Else
+		iPos = Instr(sMoji,&quot;.&quot;) + Instr(sMoji,&quot;/&quot;)
+
+		Select Case left(sMoji,1)
+			Case &quot;t&quot;	
+				if iPos &lt;&gt; 0 then sDate = cstr(1911 + val(mid(sMoji,2,iPos-2)) &amp; mid(sMoji,iPos,len(sMoji)-iPos+1)
+			Case &quot;s&quot;	
+				if iPos &lt;&gt; 0 then sDate = cstr(1925 + val(mid(sMoji,2,iPos-2)) &amp; mid(sMoji,iPos,len(sMoji)-iPos+1)
+			Case &quot;h&quot;	
+				if iPos &lt;&gt; 0 then sDate = cstr(1988 + val(mid(sMoji,2,iPos-2)) &amp; mid(sMoji,iPos,len(sMoji)-iPos+1)
+			Case &quot;r&quot;	
+				if iPos &lt;&gt; 0 then sDate = cstr(2018 + val(mid(sMoji,2,iPos-2)) &amp; mid(sMoji,iPos,len(sMoji)-iPos+1)
+			Case Else
+				
+		End select		
+ End select
+If sDate&lt;&gt;&quot;&quot; and Isdate(sDate) and oCell.getType()&lt;&gt;3 then	
+	oCell.value = datevalue(sDate)
+	oCell.numberformat = nKey
+End if	
+	next
+ next
+ErrorHandler: 
+ 	ThisComponent.removeActionLock		
+End Sub
+
+Function Conv(i as integer,s as string) as string
+ c = InStr(s,&quot;年&quot;)
+ If c&lt;&gt;0 and InStr(s,&quot;月&quot;)&lt;&gt;0 and InStr(s,&quot;日&quot;)&lt;&gt;0 then
+	s = cStr(i + val(mid(s,3,c-3))) &amp; &quot;.&quot; &amp; Right(s,len(s)-c)
+	For n = 1 to len(s)
+		if mid(s,n,1) = &quot;月&quot; then s =left(s,n-1) &amp; &quot;.&quot; &amp; right(s,len(s)-n)
+		if mid(s,n,1) = &quot;日&quot; then s =left(s,n-1) &amp; &quot;&quot; &amp; right(s,len(s)-n)
+	Next
+	Conv = s
+ Else
+ 	Conv=&quot;&quot;
+ End if 
+End function
+
+</script:module>
