@@ -31,6 +31,9 @@ Sub ConvertDate
 	sMoji = Replace(sMoji, "元", "1" )
 
  Select Case left(sMoji,2)
+	Case &quot;明治&quot;
+		sDate = Conv(1867,sMoji)
+
 	Case &quot;大正&quot;
 		sDate = Conv(1911,sMoji)
 
@@ -47,6 +50,8 @@ Sub ConvertDate
 		iPos = Instr(sMoji,&quot;.&quot;) + Instr(sMoji,&quot;/&quot;)
 
 		Select Case left(sMoji,1)
+			Case &quot;m&quot;	
+				if iPos &lt;&gt; 0 then sDate = cstr(1867 + val(mid(sMoji,2,iPos-2)) &amp; mid(sMoji,iPos,len(sMoji)-iPos+1)
 			Case &quot;t&quot;	
 				if iPos &lt;&gt; 0 then sDate = cstr(1911 + val(mid(sMoji,2,iPos-2)) &amp; mid(sMoji,iPos,len(sMoji)-iPos+1)
 			Case &quot;s&quot;	
