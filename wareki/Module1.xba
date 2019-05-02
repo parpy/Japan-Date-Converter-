@@ -16,6 +16,7 @@ Sub ConvertDate
  sFormat = &quot;YYYY/M/D&quot;
 &apos;------------------------------------
 	Dim oLocale As New com.sun.star.lang.Locale
+	svc = createUnoService( &quot;com.sun.star.sheet.FunctionAccess&quot; ) &apos;Create a service to use Calc functions
 	&apos;書式コードを探す	
 	oNumberFormats = ThisComponent.NumberFormats
 	nKey = oNumberFormats.queryKey( sFormat, oLocale, False )
@@ -28,7 +29,8 @@ Sub ConvertDate
 	oCell = oSheet.getCellByPosition(x,y)
  	sMoji = oCell.string
 	sMoji = LCase(sMoji)
-	sMoji = Replace(sMoji, "元", "1" )
+	sMoji = svc.callFunction(&quot;ASC&quot;,array(sMoji))
+	sMoji = Replace(sMoji, &quot;元&quot;, &quot;1&quot; )
 
  Select Case left(sMoji,2)
 	Case &quot;明治&quot;
