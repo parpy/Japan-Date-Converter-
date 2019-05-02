@@ -1,0 +1,7 @@
+
+Syntax :
+
+Convert Japanese calendar to Christian
+
+Converts a Japanese calendar entered as a string into a cell of selection to a real date (C).
+To convert, select a cell and then use Tools> Add-ons> Convert Date

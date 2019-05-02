@@ -5,7 +5,7 @@
 	<node oor:name="AddonUI">
 
 		<node oor:name="AddonMenu">
-					<node oor:name="org.libreoffice.example.StarterProject.menubar" oor:op="replace">
+					<node oor:name="wareki" oor:op="replace">
 						<prop oor:name="Title" oor:type="xs:string">
 							<value xml:lang="en-US">Convert Date</value>
 							<value xml:lang="ja">和暦を西暦に変換</value>
